@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Communicator - Big Agency Work. Small Agency Energy.</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-red: rgba(218, 37, 29, 1);
+;
+            --dark-gray: #222;
+            --light-gray: #f5f5f5;
+            --white: #fff;
+            --glass: rgba(255,255,255,0.08);
+            --card-shadow: 0 8px 24px rgba(0,0,0,0.12);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html,body { height: 100%; }
+        body {
+            font-family: 'Montserrat', sans-serif;
+            line-height: 1.6;
+            color: var(--dark-gray);
+            background-color: var(--white);
+            -webkit-font-smoothing:antialiased;
+            -moz-osx-font-smoothing:grayscale;
+        }
+
+        .container { max-width: 1400px; margin: 0 auto; padding: 0 20px; }
+
+        /* STICKY HEADER (centered with rounded border) */
+        header.main-header {
+            position: sticky;
+            top: 18px; /* small gap from top */
+            z-index: 999;
+            margin: 18px 20px 0 20px;
+            border-radius: 14px;
+            box-shadow: var(--card-shadow);
+            border: 2px solid rgba(255,255,255,0.06);
+            overflow: hidden;
+            backdrop-filter: blur(4px);
+        }
+
+        /* inner bar is red so the rounded border shows */
+        .header-bar {
+            background-color: var(--primary-red);
+            color: var(--white);
+            padding: 14px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo { font-size: 1.35rem; font-weight: 900; color: var(--white); text-decoration: none; display: flex; align-items: center; }
+        .logo i { margin-right: 10px; transform: translateY(-2px); }
+
+        nav { display: flex; align-items: center; gap: 18px; }
+        .nav-menu { display:flex; gap:18px; list-style:none; }
+        .nav-menu a { color:var(--white); text-decoration:none; font-weight:700; padding:6px 8px; border-radius:8px; transition: background-color .22s, transform .2s; }
+        .nav-menu a:hover { background-color: rgba(255,255,255,0.08); transform: translateY(-2px); }
+
+        .btn { background-color: var(--white); color: var(--primary-red); padding: 10px 18px; text-decoration: none; border-radius: 999px; font-weight: 800; display:inline-flex; gap:8px; align-items:center; box-shadow: 0 6px 18px rgba(0,0,0,0.12); transition: transform .18s ease, box-shadow .18s ease; }
+        .btn:hover { transform: translateY(-4px); box-shadow: 0 10px 30px rgba(0,0,0,0.18); }
+
+        /* small mobile toggle */
+        .menu-toggle { display:none; background:transparent; border:0; color:var(--white); font-size:1.1rem; }
+
+        /* HERO */
+        .hero-section {
+            background: linear-gradient(180deg, rgba(218,37,29,0.95) 0%, rgba(218,37,29,0.90) 60%), url('assetes/bg.jpg') no-repeat center/cover;z-index: 99;
+            color: var(--white);
+            text-align: center;
+            padding: 150px 50px 150px;
+            position: relative;
+            overflow: hidden;
+
+        }
+
+        .hero-content { position: relative; z-index:2; }
+        .hero-tag { font-size:0.85rem; font-weight:900; text-transform:uppercase; letter-spacing:2px; background: rgba(255,255,255,0.12); padding:7px 16px; border-radius:999px; display:inline-block; margin-bottom:18px; }
+        .hero-headline { font-size: clamp(35px, 9vw, 80px); font-weight:1200; margin-bottom:20px; line-height:1.02; font-family: 'Playfair Display', serif; animation: fadeUp .8s ease both .12s; }
+        .hero-sub { font-size:clamp(14px, 2.3vw, 20px); margin-bottom:24px; opacity:0.95; }
+
+        .hero-btn { background-color: var(--white); color: var(--primary-red); font-size:1.05rem; padding:12px 26px; border-radius:8px; text-decoration:none; font-weight:800; transition: transform .25s, box-shadow .25s; display:inline-flex; gap:10px; align-items:center; }
+        .hero-btn:hover { transform: translateY(-6px); box-shadow: 0 14px 36px rgba(0,0,0,0.2); }
+
+        /* subtle pulse to call attention */
+        .hero-btn:after { content: ''; display: inline-block; margin-left:8px; width:8px; height:8px; border-radius:50%; background:var(--primary-red); box-shadow: 0 0 0 rgba(218,37,29,0.4); animation: pulse 2.2s infinite; }
+
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(218,37,29,0.45);} 70% { box-shadow: 0 0 0 14px rgba(218,37,29,0);} 100% { box-shadow:0 0 0 0 rgba(218,37,29,0);} }
+
+        /* PORTFOLIO GRID - uniform card sizes */
+        .portfolio-grid { display:grid; grid-template-columns: repeat(3, 1fr); gap:18px; padding:42px 20px; background-color: var(--light-gray); }
+
+        .portfolio-item {
+            background: var(--white);
+            border-radius:12px;
+            overflow:hidden;
+            position:relative;
+            transform: translateY(14px);
+            opacity: 0;
+            transition: transform .6s cubic-bezier(.2,.9,.2,1), opacity .6s ease;
+        }
+        .portfolio-item.in-view { transform: translateY(0); opacity:1; }
+
+        /* enforce same aspect ratio and cropping */
+        .media-wrap { width:100%; aspect-ratio: 4 / 3; overflow:hidden; display:block; background:#ddd; }
+        .media-wrap img, .media-wrap video { width:100%; height:100%; object-fit:cover; display:block; transition: transform .45s ease; }
+        .portfolio-item:hover .media-wrap img { transform: scale(1.06) rotate(-0.2deg); }
+
+        /* overlay and title on hover */
+        .overlay {
+            position:absolute; inset:0; display:flex; align-items:flex-end; padding:16px; background: linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.45) 100%); color:var(--white); opacity:0; transform: translateY(6px); transition: transform .28s ease, opacity .28s ease;
+        }
+        .portfolio-item:hover .overlay { opacity:1; transform: translateY(0); }
+
+        .overlay .title { font-weight:700; font-size:1.05rem; }
+        .overlay .subtitle { font-size:0.85rem; opacity:0.95; }
+
+        /* shakira style card kept but consistent */
+        .portfolio-item.shakira .media-wrap { background: linear-gradient(180deg, rgba(0,0,0,0.25), rgba(0,0,0,0.35)), url('path/to/shakira-image.jpg') center/cover no-repeat; }
+        .portfolio-item.shakira .overlay { align-items:flex-start; padding:28px; }
+
+        /* footer */
+        footer.main-footer { background: var(--primary-red); color:var(--white); padding:20px 0; margin-top:28px; border-radius:8px; }
+        .footer-content { display:flex; justify-content:space-between; align-items:center; gap:12px; }
+        .footer-social { list-style:none; display:flex; gap:12px; }
+
+        /* small screens */
+        @media (max-width: 992px) {
+            .nav-menu { display:none; }
+            .menu-toggle { display:inline-block; }
+            .header-bar { gap:12px; }
+            .header-expanded { display:none; }
+            .hero-section { padding:80px 20px; }
+            .portfolio-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 768px) {
+            .container { padding:0 14px; }
+            .portfolio-grid { grid-template-columns: 1fr; padding:26px 10px; }
+            header.main-header { margin:12px 10px 0 10px; }
+        }
+
+        @media (max-width:480px) {
+            .hero-headline { font-size:28px; }
+            .btn { padding:8px 12px; }
+        }
+
+        /* small animations */
+        @keyframes fadeUp { from { transform: translateY(10px); opacity:0; } to { transform: translateY(0); opacity:1; } }
+
+        /* utility */
+        .muted { opacity:0.85; }
+    </style>
+</head>
+<body>
+
+    <header class="main-header">
+        <div class="header-bar container">
+            <a href="#" class="logo"><i class="fa-solid fa-cube"></i> FREDGE ACADEMY.</a>
+
+            <nav>
+                <button class="menu-toggle" aria-label="Toggle menu"> <i class="fa-solid fa-bars"></i> </button>
+
+                <ul class="nav-menu" id="navMenu">
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Portfolio</a></li>
+                    <li><a href="#">Pages <i class="fa-solid fa-caret-down"></i></a></li>
+                </ul>
+
+                <a href="#contact" class="btn">Get in touch <i class="fa-solid fa-arrow-right"></i></a>
+            </nav>
+        </div>
+
+        <!-- mobile expanded menu area -->
+        <div class="header-expanded container" id="mobileMenu" style="display:none; padding:12px 20px; background:linear-gradient(180deg, rgba(218,37,29,0.98), rgba(218,37,29,0.96)); border-top:1px solid rgba(255,255,255,0.04);">
+            <ul style="list-style:none; display:flex; flex-direction:column; gap:10px; padding:0; margin:0;">
+                <li><a href="#" style="color:var(--white); text-decoration:none; font-weight:700;">Home</a></li>
+                <li><a href="#" style="color:var(--white); text-decoration:none; font-weight:700;">About Us</a></li>
+                <li><a href="#" style="color:var(--white); text-decoration:none; font-weight:700;">Portfolio</a></li>
+                <li><a href="#" style="color:var(--white); text-decoration:none; font-weight:700;">Pages</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <main >
+        <section class="hero-section">
+            <div class="container hero-content">
+                <p class="hero-tag">CLICK HERE FOR MORE INFORMATION</p>
+                <h1 class="hero-headline">Big Agency Work.<br>Small Agency Energy.</h1>
+                <p class="hero-sub muted">Creative campaigns, clean design systems, brand-first thinking.</p>
+                <a href="#portfolio" class="hero-btn">View Details <i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+        </section>
+
+        <section style="background-image: url('assetes/bg.jpg');background-size: cover;background-position: center;background-repeat: no-repeat;" id="portfolio" class="portfolio">
+            <div class="portfolio-grid container">
+                <!-- card 1 -->
+                <article class="portfolio-item">
+                    <div class="media-wrap">
+                        <img src="assetes/Illinois-HCOM.png" alt="University of Illinois Campaign" loading="lazy">
+                    </div>
+                    <div class="overlay">
+                        <div>
+                            <div class="title">University Campaign</div>
+                            <div class="subtitle">Creative & Strategy</div>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="portfolio-item">
+                    <div class="media-wrap">
+                        <img src="assetes/Illinois-SBC-Phone.png" alt="Optum Branding" loading="lazy">
+                    </div>
+                    <div class="overlay">
+                        <div>
+                            <div class="title">Mobile UX</div>
+                            <div class="subtitle">App design & prototyping</div>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="portfolio-item">
+                    <div class="media-wrap">
+                        <img src="assetes/RogersAndHollands.png" alt="Oreo campaign" loading="lazy">
+                    </div>
+                    <div class="overlay">
+                        <div>
+                            <div class="title">Brand Campaign</div>
+                            <div class="subtitle">Integrated media</div>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="portfolio-item">
+                    <div class="media-wrap">
+                        <img src="assetes/Illinois-SBC-Tablet.png" alt="Restaurant marketing" loading="lazy">
+                    </div>
+                    <div class="overlay">
+                        <div>
+                            <div class="title">Tablet Layouts</div>
+                            <div class="subtitle">Menu & ordering UX</div>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="portfolio-item">
+                    <div class="media-wrap">
+                        <img src="assetes/LoyolaMedicine.png" alt="iPad app designs" loading="lazy">
+                    </div>
+                    <div class="overlay">
+                        <div>
+                            <div class="title">Healthcare UI</div>
+                            <div class="subtitle">Design systems</div>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="portfolio-item">
+                    <div class="media-wrap">
+                        <img src="assetes/Optum.png" alt="Trudy's diamonds" loading="lazy">
+                    </div>
+                    <div class="overlay">
+                        <div>
+                            <div class="title">Corporate Identity</div>
+                            <div class="subtitle">Logo & visual language</div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- repeated images kept for demo; replace as needed -->
+                <article class="portfolio-item">
+                    <div class="media-wrap">
+                        <img src="assetes/Pazzos.jpg" alt="Restaurant" loading="lazy">
+                    </div>
+                    <div class="overlay">
+                        <div>
+                            <div class="title">Restaurant Work</div>
+                            <div class="subtitle">Packaging & menus</div>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="portfolio-item">
+                    <div class="media-wrap">
+                        <img src="assetes/PiesDescalzos.jpg" alt="Pies Descalzos" loading="lazy">
+                    </div>
+                    <div class="overlay">
+                        <div>
+                            <div class="title">Social Impact</div>
+                            <div class="subtitle">Non-profit campaign</div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- special hero card for Shakira foundation, consistent with layout -->
+                <article  style=" background-image: url('assetes/Shakira.png');background-size: cover;
+                    background-position: center;
+                    background-repeat: no-repeat;" class="portfolio-item shakira">
+                    <div class="media-wrap"></div>
+                    <div class="overlay" style="align-items:flex-end;">
+                        <div>
+                            <div style="font-family:'Playfair Display', serif; font-size:1.35rem; font-weight:700;">FUNDACION PIES DESCALZOS</div>
+                            <div class="subtitle">SHAKIRA MEBARAK — FOUNDER</div>
+                        </div>
+                    </div>
+                </article>
+
+            </div>
+        </section>
+    </main>
+
+    <footer class="main-footer">
+        <div class="container footer-content">
+            <a href="#" class="logo"><i class="fa-solid fa-cube"></i>FREDGE ACADEMY.</a>
+            <nav>
+                <ul class="nav-menu">
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Portfolio</a></li>
+                </ul>
+            </nav>
+            <ul class="footer-social">
+                <li><a href="#"><i class="fa-brands fa-facebook-f"></i></a></li>
+                <li><a href="#"><i class="fa-brands fa-twitter"></i></a></li>
+                <li><a href="#"><i class="fa-brands fa-instagram"></i></a></li>
+            </ul>
+        </div>
+    </footer>
+
+    <script>
+        // mobile menu toggle
+        const toggle = document.querySelector('.menu-toggle');
+        const mobileMenu = document.getElementById('mobileMenu');
+        toggle && toggle.addEventListener('click', () => {
+            const shown = mobileMenu.style.display === 'block';
+            mobileMenu.style.display = shown ? 'none' : 'block';
+        });
+
+        // reveal on scroll for portfolio cards
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('in-view');
+            });
+        }, { threshold: 0.15 });
+
+        document.querySelectorAll('.portfolio-item').forEach(el => observer.observe(el));
+
+        // small accessibility: keyboard focus styles for nav links
+        document.querySelectorAll('.nav-menu a, .btn, .hero-btn').forEach(a => {
+            a.addEventListener('focus', () => a.style.boxShadow = '0 8px 20px rgba(0,0,0,0.18)');
+            a.addEventListener('blur', () => a.style.boxShadow = 'none');
+        });
+    </script>
+</body>
+</html>
